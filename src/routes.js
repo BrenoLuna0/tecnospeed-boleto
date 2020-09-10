@@ -1,6 +1,6 @@
 const routes = require("express").Router();
 const boletoController = require("./controllers/boletoController");
-const middleware = require("./auth");
+//const middleware = require("./auth");
 
 routes.get("/", (req, res) => {
   return res.send(
@@ -8,10 +8,6 @@ routes.get("/", (req, res) => {
   );
 });
 
-routes.post(
-  "/boleto",
-  middleware,
-  boletoController.handleTecnospeedRequisition
-);
+routes.post("/boleto", boletoController.handleTecnospeedRequisition);
 
 module.exports = routes;
