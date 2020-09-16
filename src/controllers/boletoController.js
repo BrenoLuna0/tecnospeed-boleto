@@ -8,9 +8,9 @@ const {
 
 module.exports = {
   async handleTecnospeedRequisition(req, res) {
-    console.log(req.body);
-    return res.status(200).send(true);
-    /* const [data, tempo] = req.body.dataHoraEnvio.split(" ");
+    /* console.log(req.body);
+    return res.status(200).send(true); */
+    const [data, tempo] = req.body.datahoraenvio.split(" ");
     const [dia, mes, ano] = data.split("/");
     const [hora, minuto, segundo] = tempo.split(":");
     const trx = await knex.transaction();
@@ -41,7 +41,7 @@ module.exports = {
         WEBH_BOLE_TITU_CODIGO: boletoTituloId,
         WEBH_BOLE_CODIGO: boletoId,
         WEBH_BOLE_TITU_SITUACAO: req.body.titulo.situacao,
-        WEBH_BOLE_TITU_ID_INTEGRACAO: req.body.titulo.idIntegracao,
+        WEBH_BOLE_TITU_ID_INTEGRACAO: req.body.titulo.idintegracao,
         WEBH_BOLE_TITU_NOSSO_NUMERO: req.body.titulo.TituloNossoNumero,
         WEBH_BOLE_TITU_PAGTO_DATA: req.body.titulo.PagamentoData || null,
         WEBH_BOLE_TITU_PAGTO_VALO_PAGO:
@@ -131,6 +131,6 @@ module.exports = {
     }
 
     trx.commit();
-    return res.status(200).send("DEU TUDO CERTO AMEM"); */
+    return res.status(200).send("DEU TUDO CERTO AMEM");
   },
 };
