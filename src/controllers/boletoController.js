@@ -53,7 +53,10 @@ module.exports = {
         return res.status(500).send(false);
       });
 
-    if (req.body.titulo.TituloMovimentos) {
+    if (
+      req.body.titulo.TituloMovimentos !== undefined &&
+      req.body.titulo.TituloMovimentos.length > 0
+    ) {
       let movimentoCodigos = [];
       const movimentos = req.body.titulo.TituloMovimentos.map(
         async (movimento) => {
@@ -98,57 +101,31 @@ module.exports = {
         });
       });
       const ocorrencias = arr.reduce((res, a) => res.concat(a), []);
-      /*await trx("WEBHOOK_BOLETO_MOVIMENTO")
-        .insert(
-          req.body.titulo.TituloMovimentos.map(async (movimento) => {
-            const boletoMovimentoId = await generateBoletoMovimentoId();
-            //arr.unshift({movimento.codigo : });
-            const [data, tempo] = movimento.data.split(" ");
-            const [dia, mes, ano] = data.split("/");
-            const [hora, minuto, segundo] = tempo.split(":");
-            return {
-              WEBH_BOLE_MOVI_CODIGO: boletoMovimentoId,
-              WEBH_BOLE_TITU_CODIGO: boletoTituloId,
-              WEBH_BOLE_MOVI_CODIGO_MOVI: movimento.codigo,
-              WEBH_BOLE_MOVI_MENSAGEM: movimento.mensagem,
-              WEBH_BOLE_MOVI_DATA: new Date(
-                ano,
-                mes,
-                dia,
-                hora,
-                minuto,
-                segundo
-              ),
-            };
-          })
-        )
-        .catch((err) => {
-          console.log(err);
-          trx.rollback();
-          return res.status(500).send(false);
-        });*/
-      /*await trx("WEBHOOK_BOLETO_OCORRENCIA")
-        .insert(
-          req.body.titulo.TituloMovimentos.map(async (movimento) => {
-            return (
-              movimento.ocorrencias,
-              length !== 0
-                ? movimento.ocorrencias.map(async (ocorrencia) => {
-                    return {
-                      WEBH_BOLE_OCOR_CODIGO: await generateBoletoOcorrenciaId(),
-                      WEBH_BOLE_MOVI_CODIGO: boletoMovimentoId,
-                      WEBH_BOLE_OCOR_CODIGO_MOVI: ocorrencia.codigo,
-                      WEBH_BOLE_OCOR_MENSAGEM: ocorrencia.mensagem,
-                    };
-                  })
-                : []
-            );
-          }).flat()
-        )
-        .catch((err) => {
-          console.log(err);
-          return res.status(500).send(false);
-        });*/
+      if (ocorrencias.length > 0) {
+        const ocorrenciasInsert = ocorrencias.map(async (ocorrencia) => {
+          const movimentoCodigo = movimentoCodigos.filter(
+            (movimento) =>
+              movimento.movimentoCodigo === ocorrencia.movimentoCodigo
+          );
+          return {
+            WEBH_BOLE_OCOR_CODIGO: await generateBoletoMovimentoId(),
+            WEBH_BOLE_MOVI_CODIGO: movimentoCodigo.codigo,
+            WEBH_BOLE_OCOR_CODIGO_MOVI: ocorrencia.codigo,
+            WEBH_BOLE_OCOR_MENSAGEM: ocorrencia.mensagem,
+          };
+        });
+        let ocorrenciasObj;
+        await Promise.all(ocorrenciasInsert).then(function (results) {
+          ocorrenciasObj = results;
+        });
+        await trx("WEBHOOK_BOLETO_OCORRENCIA")
+          .insert(ocorrenciasObj)
+          .catch((err) => {
+            console.log(err);
+            trx.rollback();
+            return res.status(500).send(false);
+          });
+      }
     }
 
     trx.commit();
