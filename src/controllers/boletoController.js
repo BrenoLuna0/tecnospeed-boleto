@@ -8,7 +8,8 @@ const {
 
 module.exports = {
   async handleTecnospeedRequisition(req, res) {
-    return res.status(200).send(req.body);
+    console.log(req.body);
+    return res.status(200).send(true);
     /* const [data, tempo] = req.body.dataHoraEnvio.split(" ");
     const [dia, mes, ano] = data.split("/");
     const [hora, minuto, segundo] = tempo.split(":");
