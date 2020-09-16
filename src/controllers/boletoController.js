@@ -8,7 +8,8 @@ const {
 
 module.exports = {
   async handleTecnospeedRequisition(req, res) {
-    const [data, tempo] = req.body.dataHoraEnvio.split(" ");
+    return res.status(200).send(req.body);
+    /* const [data, tempo] = req.body.dataHoraEnvio.split(" ");
     const [dia, mes, ano] = data.split("/");
     const [hora, minuto, segundo] = tempo.split(":");
     const trx = await knex.transaction();
@@ -129,6 +130,6 @@ module.exports = {
     }
 
     trx.commit();
-    return res.status(200).send("DEU TUDO CERTO AMEM");
+    return res.status(200).send("DEU TUDO CERTO AMEM"); */
   },
 };
