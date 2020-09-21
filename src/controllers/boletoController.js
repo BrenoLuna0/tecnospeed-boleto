@@ -8,8 +8,6 @@ const {
 
 module.exports = {
   async handleTecnospeedRequisition(req, res) {
-    /* console.log(req.body);
-    return res.status(200).send(true); */
     const [data, tempo] = req.body.datahoraenvio.split(" ");
     const [dia, mes, ano] = data.split("/");
     const [hora, minuto, segundo] = tempo.split(":");
@@ -110,7 +108,7 @@ module.exports = {
               movimento.movimentoCodigo === ocorrencia.movimentoCodigo
           );
           return {
-            WEBH_BOLE_OCOR_CODIGO: await generateBoletoMovimentoId(),
+            WEBH_BOLE_OCOR_CODIGO: await generateBoletoOcorrenciaId(),
             WEBH_BOLE_MOVI_CODIGO: movimentoCodigo.codigo,
             WEBH_BOLE_OCOR_CODIGO_MOVI: ocorrencia.codigo,
             WEBH_BOLE_OCOR_MENSAGEM: ocorrencia.mensagem,

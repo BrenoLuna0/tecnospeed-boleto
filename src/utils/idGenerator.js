@@ -39,7 +39,7 @@ module.exports = {
 
   async generateBoletoOcorrenciaId() {
     return await knex
-      .raw("SELECT SEQ_WEBHOOK_BOLETO_OCORRENCIA,NEXTVAL FROM DUAL")
+      .raw("SELECT SEQ_WEBHOOK_BOLETO_OCORRENCIA.NEXTVAL FROM DUAL")
       .then((response) => {
         return response[0].NEXTVAL;
       })
