@@ -18,6 +18,7 @@ module.exports = {
       .insert({
         WEBH_BOLE_CODIGO: boletoId,
         WEBH_BOLE_TIPO_WH: req.body.tipoWH,
+        WEBH_BOLE_CNPJ_CEDENTE: "27.700.153/0003-60",
         WEBH_BOLE_DATA_HORA_ENVIO: new Date(
           ano,
           mes,
