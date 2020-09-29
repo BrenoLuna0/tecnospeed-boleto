@@ -8,20 +8,23 @@ const {
 
 module.exports = {
   async handleTecnospeedRequisition(req, res) {
-    const [data, tempo] = req.body.datahoraenvio.split(" ");
+    console.log(req.body);
+    console.log(req.body.TituloMovimentos);
+    const [data, tempo] = req.body.dataHoraEnvio.split(" ");
     const [dia, mes, ano] = data.split("/");
     const [hora, minuto, segundo] = tempo.split(":");
     const trx = await knex.transaction();
 
     const boletoId = await generateBoletoId();
     await trx("WEBHOOK_BOLETO")
+      .returning("*")
       .insert({
         WEBH_BOLE_CODIGO: boletoId,
-        WEBH_BOLE_TIPO_WH: req.body.tipoWH,
+        WEBH_BOLE_TIPO_WH: req.body.tipoWh || req.body.tipoWH,
         WEBH_BOLE_CNPJ_CEDENTE: process.env.CNPJ,
         WEBH_BOLE_DATA_HORA_ENVIO: new Date(
           ano,
-          mes,
+          (parseInt(mes) - 1).toString(),
           dia,
           hora,
           minuto,
@@ -76,7 +79,14 @@ module.exports = {
             WEBH_BOLE_TITU_CODIGO: boletoTituloId,
             WEBH_BOLE_MOVI_CODIGO_MOVI: movimento.codigo,
             WEBH_BOLE_MOVI_MENSAGEM: movimento.mensagem,
-            WEBH_BOLE_MOVI_DATA: new Date(ano, mes, dia, hora, minuto, segundo),
+            WEBH_BOLE_MOVI_DATA: new Date(
+              ano,
+              (parseInt(mes) - 1).toString(),
+              dia,
+              hora,
+              minuto,
+              segundo
+            ),
           };
         }
       );
@@ -101,10 +111,11 @@ module.exports = {
           };
         });
       });
+
       const ocorrencias = arr.reduce((res, a) => res.concat(a), []);
       if (ocorrencias.length > 0) {
         const ocorrenciasInsert = ocorrencias.map(async (ocorrencia) => {
-          const movimentoCodigo = movimentoCodigos.filter(
+          const movimentoCodigo = movimentoCodigos.find(
             (movimento) =>
               movimento.movimentoCodigo === ocorrencia.movimentoCodigo
           );
@@ -130,6 +141,6 @@ module.exports = {
     }
 
     trx.commit();
-    return res.status(200).send("DEU TUDO CERTO AMEM");
+    return res.status(200).send("DEU TUDO CERTO");
   },
 };
